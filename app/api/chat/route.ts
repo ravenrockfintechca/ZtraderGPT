@@ -1,28 +1,22 @@
-import { NextRequest } from 'next/server'
+k// app/api/chat/route.ts
+import { streamText, convertToCoreMessages } from 'ai';
+import { openai } from 'ai/openai';
 
-export const runtime = 'edge'
+// 改為 nodejs 運行時以避免 Edge Runtime 問題
+export const runtime = 'nodejs';
 
-export async function POST(req: NextRequest) {
-  const { messages } = await req.json()
+export async function POST(req: Request) {
+  try {
+    const { messages } = await req.json();
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o',
-      messages,
-      stream: true,
-    }),
-  })
+    const result = await streamText({
+      model: openai('gpt-3.5-turbo'),
+      messages: convertToCoreMessages(messages),
+    });
 
-  return new Response(response.body, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      Connection: 'keep-alive',
-    },
-  })
+    return result.toDataStreamResponse();
+  } catch (error) {
+    console.error('Chat API Error:', error);
+    return new Response('Internal Server Error', { status: 500 });
+  }
 }
