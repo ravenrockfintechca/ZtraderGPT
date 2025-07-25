@@ -19,6 +19,8 @@
     "test": "export PLAYWRIGHT=True && pnpm exec playwright test"
   },
   "dependencies": {
+    "openai": "^4.26.0",
+    "ai": "^5.0.0-beta.6",
     "@ai-sdk/provider": "2.0.0-beta.1",
     "@ai-sdk/react": "2.0.0-beta.6",
     "@ai-sdk/xai": "2.0.0-beta.2",
