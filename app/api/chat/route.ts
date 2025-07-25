@@ -1,35 +1,28 @@
-import OpenAI from 'openai'
+import { NextRequest } from 'next/server'
 
 export const runtime = 'edge'
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const { messages } = await req.json()
 
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY!,
-  })
-
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    stream: true,
-    messages,
-  })
-
-  const encoder = new TextEncoder()
-  const stream = new ReadableStream({
-    async start(controller) {
-      for await (const chunk of response) {
-        const content = chunk.choices?.[0]?.delta?.content || ''
-        controller.enqueue(encoder.encode(content))
-      }
-      controller.close()
-    },
-  })
-
-  return new Response(stream, {
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
     headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      messages,
+      stream: true,
+    }),
+  })
+
+  return new Response(response.body, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      Connection: 'keep-alive',
     },
   })
 }
-
