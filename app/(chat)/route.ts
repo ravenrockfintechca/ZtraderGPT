@@ -1,35 +1,21 @@
 // app/api/chat/route.ts
-import OpenAI from 'openai'
+import { streamText, convertToCoreMessages } from 'ai';
+import { openai } from 'ai/openai';
 
-export const runtime = 'edge'
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
+export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
-  const { messages } = await req.json()
+  try {
+    const { messages } = await req.json();
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    stream: true,
-    messages,
-  })
+    const result = await streamText({
+      model: openai('gpt-3.5-turbo'),
+      messages: convertToCoreMessages(messages),
+    });
 
-  const encoder = new TextEncoder()
-  const stream = new ReadableStream({
-    async start(controller) {
-      for await (const chunk of response) {
-        const content = chunk.choices?.[0]?.delta?.content || ''
-        controller.enqueue(encoder.encode(content))
-      }
-      controller.close()
-    },
-  })
-
-  return new Response(stream, {
-    headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
-    },
-  })
+    return result.toDataStreamResponse();
+  } catch (error) {
+    console.error('Chat API Error:', error);
+    return new Response('Internal Server Error', { status: 500 });
+  }
 }

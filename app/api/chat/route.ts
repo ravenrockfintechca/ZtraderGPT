@@ -1,4 +1,4 @@
-k// app/api/chat/route.ts
+// app/api/chat/route.ts
 import { streamText, convertToCoreMessages } from 'ai';
 import { openai } from 'ai/openai';
 
