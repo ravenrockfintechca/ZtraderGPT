@@ -1,6 +1,10 @@
 // app/api/chat/route.ts
 import { streamText, convertToCoreMessages } from 'ai';
+<<<<<<< HEAD
 import { openai } from '@ai-sdk/openai';
+=======
+import { openai } from '@ai-sdk/openai'
+>>>>>>> 37ab917f7b007dd61c6be3565f66e101c2243a51
 
 export const runtime = 'nodejs';
 
