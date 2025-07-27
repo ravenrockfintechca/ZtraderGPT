@@ -33,8 +33,8 @@ export async function POST(req: Request) {
         })
       });
     } else {
-      // Groq API call (default)
-      modelName = "llama-3.1-70b-versatile";
+      // Groq API call (default) - Updated model
+      modelName = "llama-3.1-8b-instant"; // New model name
       response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
