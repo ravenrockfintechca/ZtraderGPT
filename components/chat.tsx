@@ -1,6 +1,6 @@
 'use client';
 
-// import { DefaultChatTransport } from 'ai';
+// // import { DefaultChatTransport } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
@@ -63,7 +63,7 @@ export function Chat({
     messages: initialMessages,
     experimental_throttle: 100,
     generateId: generateUUID,
-    transport: new DefaultChatTransport({
+    // transport: new DefaultChatTransport({
       api: '/api/chat',
       fetch: fetchWithErrorHandlers,
       prepareSendMessagesRequest({ messages, id, body }) {
