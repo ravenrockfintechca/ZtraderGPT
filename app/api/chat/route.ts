@@ -1,10 +1,7 @@
+cat > app/api/chat/route.ts << 'EOF'
 // app/api/chat/route.ts
 import { streamText, convertToCoreMessages } from 'ai';
-<<<<<<< HEAD
 import { openai } from '@ai-sdk/openai';
-=======
-import { openai } from '@ai-sdk/openai'
->>>>>>> 37ab917f7b007dd61c6be3565f66e101c2243a51
 
 export const runtime = 'nodejs';
 
@@ -17,7 +14,7 @@ export async function POST(req: Request) {
     }
 
     const { messages } = await req.json();
-
+    
     if (!messages || !Array.isArray(messages)) {
       return new Response('Invalid messages format', { status: 400 });
     }
@@ -49,3 +46,4 @@ export async function POST(req: Request) {
 export async function GET() {
   return new Response('Chat API is working', { status: 200 });
 }
+EOF
