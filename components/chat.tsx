@@ -1,6 +1,6 @@
 'use client';
 
-import { DefaultChatTransport } from 'ai';
+// import { DefaultChatTransport } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';

@@ -38,11 +38,11 @@ type ToolProps = {
   isToolbarVisible?: boolean;
   setIsToolbarVisible?: Dispatch<SetStateAction<boolean>>;
   isAnimating: boolean;
-  sendMessage: UseChatHelpers<ChatMessage>['sendMessage'];
+  sendMessage: UseChatHelpers['sendMessage'];
   onClick: ({
     sendMessage,
   }: {
-    sendMessage: UseChatHelpers<ChatMessage>['sendMessage'];
+    sendMessage: UseChatHelpers['sendMessage'];
   }) => void;
 };
 
@@ -139,7 +139,7 @@ const ReadingLevelSelector = ({
 }: {
   setSelectedTool: Dispatch<SetStateAction<string | null>>;
   isAnimating: boolean;
-  sendMessage: UseChatHelpers<ChatMessage>['sendMessage'];
+  sendMessage: UseChatHelpers['sendMessage'];
 }) => {
   const LEVELS = [
     'Elementary',
@@ -255,7 +255,7 @@ export const Tools = ({
   isToolbarVisible: boolean;
   selectedTool: string | null;
   setSelectedTool: Dispatch<SetStateAction<string | null>>;
-  sendMessage: UseChatHelpers<ChatMessage>['sendMessage'];
+  sendMessage: UseChatHelpers['sendMessage'];
   isAnimating: boolean;
   setIsToolbarVisible: Dispatch<SetStateAction<boolean>>;
   tools: Array<ArtifactToolbarItem>;
@@ -311,10 +311,10 @@ const PureToolbar = ({
 }: {
   isToolbarVisible: boolean;
   setIsToolbarVisible: Dispatch<SetStateAction<boolean>>;
-  status: UseChatHelpers<ChatMessage>['status'];
-  sendMessage: UseChatHelpers<ChatMessage>['sendMessage'];
-  stop: UseChatHelpers<ChatMessage>['stop'];
-  setMessages: UseChatHelpers<ChatMessage>['setMessages'];
+  status: UseChatHelpers['status'];
+  sendMessage: UseChatHelpers['sendMessage'];
+  stop: UseChatHelpers['stop'];
+  setMessages: UseChatHelpers['setMessages'];
   artifactKind: ArtifactKind;
 }) => {
   const toolbarRef = useRef<HTMLDivElement>(null);

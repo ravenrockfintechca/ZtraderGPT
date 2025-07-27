@@ -37,8 +37,8 @@ const PurePreviewMessage = ({
   message: ChatMessage;
   vote: Vote | undefined;
   isLoading: boolean;
-  setMessages: UseChatHelpers<ChatMessage>['setMessages'];
-  regenerate: UseChatHelpers<ChatMessage>['regenerate'];
+  setMessages: UseChatHelpers['setMessages'];
+  regenerate: UseChatHelpers['regenerate'];
   isReadonly: boolean;
   requiresScrollPadding: boolean;
 }) => {
