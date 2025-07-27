@@ -1,13 +1,14 @@
-cat > app/api/chat/route.ts << 'EOF'
-// app/api/chat/route.ts
 import { streamText, convertToCoreMessages } from 'ai';
 import { openai } from '@ai-sdk/openai';
 
 export const runtime = 'nodejs';
 
+export async function GET() {
+  return new Response('Chat API is working', { status: 200 });
+}
+
 export async function POST(req: Request) {
   try {
-    // 检查 API 密钥
     if (!process.env.OPENAI_API_KEY) {
       console.error('Missing OPENAI_API_KEY');
       return new Response('OpenAI API key not configured', { status: 500 });
@@ -29,21 +30,6 @@ export async function POST(req: Request) {
     return result.toDataStreamResponse();
   } catch (error) {
     console.error('Chat API Error:', error);
-    return new Response(
-      JSON.stringify({ 
-        error: 'Internal Server Error',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }), 
-      { 
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+    return new Response('Internal Server Error', { status: 500 });
   }
 }
-
-// 添加 GET 方法用于测试
-export async function GET() {
-  return new Response('Chat API is working', { status: 200 });
-}
-EOF
