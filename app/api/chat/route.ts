@@ -1,42 +1,69 @@
 export async function GET() {
-  return Response.json({ status: "Chat API is running" });
+  return Response.json({ 
+    status: "Chat API is running", 
+    models: ["openai", "groq"],
+    default: "groq"
+  });
 }
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const { messages, model = "groq" } = await req.json();
     
-    console.log('Received messages:', JSON.stringify(messages));
-    console.log('API Key exists:', !!process.env.OPENAI_API_KEY);
+    console.log(`Using model: ${model}`);
     
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages,
-        max_tokens: 1000,
-        stream: false
-      })
-    });
+    let response;
+    let modelName;
+    
+    if (model === "openai") {
+      // OpenAI API call
+      modelName = "gpt-4o-mini";
+      response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: modelName,
+          messages,
+          max_tokens: 1000,
+          temperature: 0.7,
+          stream: false
+        })
+      });
+    } else {
+      // Groq API call (default)
+      modelName = "llama-3.1-70b-versatile";
+      response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: modelName,
+          messages,
+          max_tokens: 1000,
+          temperature: 0.7,
+          stream: false
+        })
+      });
+    }
     
     if (!response.ok) {
       const errorData = await response.text();
-      console.error('OpenAI API Error:', response.status, errorData);
-      throw new Error(`OpenAI API error: ${response.status} ${errorData}`);
+      console.error(`${model.toUpperCase()} API Error:`, response.status, errorData);
+      throw new Error(`${model.toUpperCase()} API error: ${response.status} ${errorData}`);
     }
     
     const data = await response.json();
-    console.log('OpenAI Response:', JSON.stringify(data));
-    
-    // Return in AI SDK compatible format
     const aiResponse = data.choices[0].message.content;
     
-    // Create a simple text stream response that matches AI SDK format
-    return new Response(`0:"${aiResponse}"`, {
+    // Add model info to response
+    const responseWithModel = `Model: ${modelName}\n\n${aiResponse}`;
+    
+    return new Response(`0:"${responseWithModel}"`, {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
         'x-vercel-ai-data-stream': 'v1'
