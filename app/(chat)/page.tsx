@@ -1,55 +1,30 @@
-import { cookies } from 'next/headers';
+// app/(chat)/page.tsx
+import { Suspense } from 'react';
+import { ChatInterface } from './chat-interface';
 
-import { Chat } from '@/components/chat';
-import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
-import { generateUUID } from '@/lib/utils';
-import { DataStreamHandler } from '@/components/data-stream-handler';
-import { auth } from '../(auth)/auth';
-import { redirect } from 'next/navigation';
-
-export default async function Page() {
-  const session = await auth();
-
-  if (!session) {
-    redirect('/api/auth/guest');
-  }
-
-  const id = generateUUID();
-
-  const cookieStore = await cookies();
-  const modelIdFromCookie = cookieStore.get('chat-model');
-
-  if (!modelIdFromCookie) {
-    return (
-      <>
-        <Chat
-          key={id}
-          id={id}
-          initialMessages={[]}
-          initialChatModel={DEFAULT_CHAT_MODEL}
-          initialVisibilityType="private"
-          isReadonly={false}
-          session={session}
-          autoResume={false}
-        />
-        <DataStreamHandler />
-      </>
-    );
-  }
-
+// Server Component (default)
+export default function ChatPage() {
   return (
-    <>
-      <Chat
-        key={id}
-        id={id}
-        initialMessages={[]}
-        initialChatModel={modelIdFromCookie.value}
-        initialVisibilityType="private"
-        isReadonly={false}
-        session={session}
-        autoResume={false}
-      />
-      <DataStreamHandler />
-    </>
+    <div className="flex flex-col h-screen">
+      <header className="bg-white border-b border-gray-200 px-4 py-3">
+        <h1 className="text-xl font-semibold text-gray-900">AI Chat</h1>
+      </header>
+      
+      <main className="flex-1 overflow-hidden">
+        <Suspense fallback={<ChatLoading />}>
+          <ChatInterface />
+        </Suspense>
+      </main>
+    </div>
+  );
+}
+
+// Loading component
+function ChatLoading() {
+  return (
+    <div className="flex items-center justify-center h-full">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <span className="ml-2 text-gray-600">Loading chat...</span>
+    </div>
   );
 }
